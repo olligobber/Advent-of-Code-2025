@@ -73,25 +73,6 @@
 
 #(pairs = pairs.sorted(key: ((a, b)) => distance(points.at(a), points.at(b))))
 
-#canvas({
-	import draw: line, content, circle, ortho
-
-	ortho(y: -30deg, x:30deg, {
-		line((0,0,0), (10,0,0), mark: (end:"stealth", fill: black))
-		line((0,0,0), (0,10,0), mark: (end:"stealth", fill: black))
-		line((0,0,0), (0,0,10), mark: (end:"stealth", fill: black))
-		content((10.5,0,0), $x$)
-		content((0, 10.5, 0), $y$)
-		content((0, 0, 10.5), $z$)
-		for (x,y,z) in points {
-			circle((x/10000, y/10000, z/10000), radius: 0.02, fill: blue, stroke: blue)
-		}
-		for (a,b) in pairs {
-			line(scale-point(points.at(a)), scale-point(points.at(b)), stroke: navy)
-		}
-	})
-})
-
 #let uf = (points.len(), (("root", 0),) * points.len())
 
 #let representative(uf, i) = {
@@ -123,17 +104,20 @@
 }
 
 #let last-pair = ()
+#let repri = -1
+#let reprj = -1
 
 #for (i, j) in pairs {
 	if uf.at(0) == 2 {
-		let (uf, repri) = representative(uf, i)
-		let (uf, reprj) = representative(uf, j)
+		(uf, repri) = representative(uf, i)
+		(uf, reprj) = representative(uf, j)
 		if repri != reprj {
 			last-pair = (i, j)
 			break
 		}
+	} else {
+		uf = union(uf, i, j)
 	}
-	uf = union(uf, i, j)
 }
 
 #let groups = (:)
@@ -158,7 +142,7 @@
 		content((10.5,0,0), $x$)
 		content((0, 10.5, 0), $y$)
 		content((0, 0, 10.5), $z$)
-		for (key, group) in groups {
+		for (key, group) in groups.values().enumerate() {
 			let color = nametocolour(int(key))
 			for i in group {
 				circle(scale-point(points.at(i)), radius: 0.02, fill: color, stroke: color)
@@ -168,3 +152,13 @@
 		line(scale-point(points.at(i)), scale-point(points.at(j)), stroke: navy)
 	})
 })
+
+= Multiply X Coordinates of Last Pair
+
+#let (i, j) = last-pair
+
+#let x1 = points.at(i).at(0)
+
+#let x2 = points.at(j).at(0)
+
+$#x1 times #x2 = #(x1 * x2)$

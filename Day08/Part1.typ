@@ -150,7 +150,7 @@
 		content((10.5,0,0), $x$)
 		content((0, 10.5, 0), $y$)
 		content((0, 0, 10.5), $z$)
-		for (key, group) in groups {
+		for (key, group) in groups.values().enumerate() {
 			let color = nametocolour(int(key))
 			for i in group {
 				circle(scale-point(points.at(i)), radius: 0.02, fill: color, stroke: color)
